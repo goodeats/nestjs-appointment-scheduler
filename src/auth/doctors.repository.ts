@@ -1,9 +1,8 @@
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { Doctor } from './doctor.entity';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { CreateDoctorProfileDto } from './dto/create-doctor-profile.dto';
 import { ConflictException } from '@nestjs/common';
+import { DoctorSignupDto } from './dto/doctor-signup.dto';
 
 // Creating and Using Custom Repositories in NestJS with TypeORM 0.3
 // https://tech.durgadas.in/creating-and-using-custom-repositories-in-nestjs-with-typeorm-0-3-c7ac9548ad99
@@ -11,26 +10,24 @@ import { ConflictException } from '@nestjs/common';
 
 export interface DoctorsRepository extends Repository<Doctor> {
   this: Repository<Doctor>;
-  createDoctor(
-    authCredentialsDto: AuthCredentialsDto,
-    createDoctorProfileDto: CreateDoctorProfileDto,
-  ): Promise<void>;
+  getByEmail(email: string): Promise<Doctor>;
+  createDoctor(doctorSignupDto: DoctorSignupDto): Promise<void>;
 }
 
 export const customDoctorsRepository: Pick<DoctorsRepository, any> = {
-  async createDoctor(
-    authCredentialsDto: AuthCredentialsDto,
-    createDoctorProfileDto: CreateDoctorProfileDto,
-  ): Promise<void> {
-    const { email, password } = authCredentialsDto;
+  async getByEmail(email: string): Promise<Doctor> {
+    return this.findOne({ where: { email } });
+  },
+
+  async createDoctor(doctorSignupDto: DoctorSignupDto): Promise<void> {
+    const { password, ...createDoctorProfile } = doctorSignupDto;
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const doctor = this.create({
-      email,
       password: hashedPassword,
-      ...createDoctorProfileDto,
+      ...createDoctorProfile,
     });
 
     try {
