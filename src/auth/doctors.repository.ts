@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { Doctor } from './doctor.entity';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { CreateDoctorDto } from './dto/create-doctor.dto';
+import { CreateDoctorProfileDto } from './dto/create-doctor-profile.dto';
 import { ConflictException } from '@nestjs/common';
 
 // Creating and Using Custom Repositories in NestJS with TypeORM 0.3
@@ -13,14 +13,14 @@ export interface DoctorsRepository extends Repository<Doctor> {
   this: Repository<Doctor>;
   createDoctor(
     authCredentialsDto: AuthCredentialsDto,
-    createDoctorDto: CreateDoctorDto,
+    createDoctorProfileDto: CreateDoctorProfileDto,
   ): Promise<void>;
 }
 
 export const customDoctorsRepository: Pick<DoctorsRepository, any> = {
   async createDoctor(
     authCredentialsDto: AuthCredentialsDto,
-    createDoctorDto: CreateDoctorDto,
+    createDoctorProfileDto: CreateDoctorProfileDto,
   ): Promise<void> {
     const { email, password } = authCredentialsDto;
 
@@ -30,7 +30,7 @@ export const customDoctorsRepository: Pick<DoctorsRepository, any> = {
     const doctor = this.create({
       email,
       password: hashedPassword,
-      ...createDoctorDto,
+      ...createDoctorProfileDto,
     });
 
     try {

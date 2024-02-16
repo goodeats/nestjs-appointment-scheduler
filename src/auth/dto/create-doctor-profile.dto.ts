@@ -2,7 +2,7 @@ import { IsEnum, IsString, MaxLength, MinLength } from 'class-validator';
 import { DoctorState } from '../doctor-state.enum';
 
 // aside from email and password which are used for authentication
-export class CreateDoctorDto {
+export class CreateDoctorProfileDto {
   @IsString()
   @MinLength(2)
   @MaxLength(32)
