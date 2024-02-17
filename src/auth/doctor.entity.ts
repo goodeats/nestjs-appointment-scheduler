@@ -3,7 +3,7 @@ import { DoctorState } from './doctor-state.enum';
 
 @Entity()
 export class Doctor {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()

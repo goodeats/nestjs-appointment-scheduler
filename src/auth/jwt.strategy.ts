@@ -14,13 +14,20 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     // https://docs.nestjs.com/recipes/passport#implementing-passport-jwt
     super({
-      secretOrKey: 'topSecret123',
+      secretOrKey: 'jwt-development-secret',
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
     });
   }
 
-  // async validate(payload: JwtPayload): Promise<Doctor> {
-  //   //
-  // }
+  async validate(payload: JwtPayload): Promise<Doctor> {
+    const { email } = payload;
+    const doctor = await this.usersRepository.getByEmail(email);
+
+    if (!doctor) {
+      throw new UnauthorizedException();
+    }
+
+    return doctor;
+  }
 }

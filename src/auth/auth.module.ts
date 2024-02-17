@@ -9,12 +9,25 @@ import {
 import { Doctor } from './doctor.entity';
 import { DataSource } from 'typeorm';
 import { customDoctorsRepository } from './doctors.repository';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Doctor])],
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: 'jwt-development-secret',
+      signOptions: {
+        expiresIn: 3600,
+      },
+    }),
+    TypeOrmModule.forFeature([Doctor]),
+  ],
   controllers: [AuthController],
   providers: [
     AuthService,
+    JwtStrategy,
     {
       provide: getRepositoryToken(Doctor),
       inject: [getDataSourceToken()],
@@ -22,5 +35,6 @@ import { customDoctorsRepository } from './doctors.repository';
         dataSource.getRepository(Doctor).extend(customDoctorsRepository),
     },
   ],
+  exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}
