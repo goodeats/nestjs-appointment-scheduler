@@ -5,6 +5,7 @@ import { ProfileModule } from './profile/profile.module';
 import { InsuranceModule } from './insurance/insurance.module';
 import { DoctorsInsuranceModule } from './doctors-insurance/doctors-insurance.module';
 import { PatientsInsuranceModule } from './patients-insurance/patients-insurance.module';
+import { AppointmentModule } from './appointment/appointment.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PatientsInsuranceModule } from './patients-insurance/patients-insurance
     InsuranceModule,
     DoctorsInsuranceModule,
     PatientsInsuranceModule,
+    AppointmentModule,
   ],
   controllers: [],
   providers: [],
