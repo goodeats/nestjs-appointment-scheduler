@@ -1,7 +1,5 @@
 import { Repository } from 'typeorm';
 import { Appointment } from './appointment.entity';
-import { User } from 'src/auth/user.entity';
-import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { Profile } from 'src/profile/profile.entity';
 
 // Creating and Using Custom Repositories in NestJS with TypeORM 0.3

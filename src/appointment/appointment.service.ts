@@ -42,11 +42,13 @@ export class AppointmentService {
       );
     }
 
+    // Get the patient profile
     const patientProfile = await this.profilesRepository.getProfile(user);
     if (!patientProfile) {
       throw new NotFoundException('Profile not found');
     }
 
+    // Get the doctor profile
     const { doctorId } = createAppointmentDto;
     const doctorProfile =
       await this.profilesRepository.getDoctorProfileById(doctorId);
@@ -54,9 +56,31 @@ export class AppointmentService {
       throw new NotFoundException('Doctor not found');
     }
 
+    // check if doctor and patient are in the same state
     if (doctorProfile.state !== patientProfile.state) {
       throw new UnauthorizedException(
         'Doctor and patient must be in the same state',
+      );
+    }
+
+    // check if patient has insurance
+    const patientInsurance =
+      await this.profilesRepository.getInsurances(patientProfile);
+    if (patientInsurance.length === 0) {
+      throw new UnauthorizedException('Patient does not have insurance');
+    }
+    const patientInsuranceId = patientInsurance[0].id;
+
+    // check if doctor takes patient insurance
+    const doctorInsurance =
+      await this.profilesRepository.getInsurances(doctorProfile);
+    const doctorTakesPatientInsurance = doctorInsurance.find(
+      (doctorInsurance) => doctorInsurance.id === patientInsuranceId,
+    );
+
+    if (!doctorTakesPatientInsurance) {
+      throw new UnauthorizedException(
+        'Doctor does not accept patient insurance',
       );
     }
 
