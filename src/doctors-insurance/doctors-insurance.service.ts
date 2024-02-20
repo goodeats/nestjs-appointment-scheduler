@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -26,15 +27,31 @@ export class DoctorsInsuranceService {
     insurancesFilterDto: GetInsurancesFilterDto,
     user: User,
   ): Promise<Insurance[]> {
+    // this could be its own decorator
     if (user.type !== UserType.DOCTOR) {
       throw new UnauthorizedException('User is not a doctor');
     }
 
-    return user.profile.insurances;
-    // not filtering right now
-    // return this.insurancesRepository.getInsurances(
-    //   insurancesFilterDto,
-    //   user.profile,
-    // );
+    return await this.profilesRepository.getInsurances(user.profile);
+  }
+
+  async createInsuranceByDoctorId(
+    createDoctorInsuranceDto,
+    user: User,
+  ): Promise<void> {
+    if (user.type !== UserType.DOCTOR) {
+      throw new UnauthorizedException('User is not a doctor');
+    }
+
+    // Get the insurance
+    const { insuranceId } = createDoctorInsuranceDto;
+    const insurance = await this.insurancesRepository.findOne({
+      where: { id: insuranceId },
+    });
+    if (!insurance) {
+      throw new NotFoundException('Insurance not found');
+    }
+
+    return await this.profilesRepository.addInsurance(user.profile, insurance);
   }
 }

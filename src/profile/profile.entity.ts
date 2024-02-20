@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinTable,
   ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -28,5 +29,6 @@ export class Profile {
 
   // will limit to one in business logic for patients
   @ManyToMany(() => Insurance, (insurance) => insurance.profiles)
+  @JoinTable()
   insurances: Insurance[];
 }
