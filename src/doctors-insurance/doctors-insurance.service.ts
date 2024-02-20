@@ -30,9 +30,11 @@ export class DoctorsInsuranceService {
       throw new UnauthorizedException('User is not a doctor');
     }
 
-    return this.insurancesRepository.getInsurances(
-      insurancesFilterDto,
-      user.profile,
-    );
+    return user.profile.insurances;
+    // not filtering right now
+    // return this.insurancesRepository.getInsurances(
+    //   insurancesFilterDto,
+    //   user.profile,
+    // );
   }
 }
