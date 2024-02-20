@@ -2,6 +2,10 @@
 
 Practicing NestJS with building an appointment scheduler for doctors and patients
 
+- `User` auth has signup endpoints for types: `Doctor` and `Patient`
+- `User` auth has shared signin endpoint
+- `Profile` has authenticated endpoints for Get, Post, Patch
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.

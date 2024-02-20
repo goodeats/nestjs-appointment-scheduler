@@ -1,8 +1,8 @@
 import { IsEnum, IsString, MaxLength, MinLength } from 'class-validator';
-import { DoctorState } from '../doctor-state.enum';
+import { UserState } from '../user-state.enum';
 
-// aside from email and password which are used for authentication
-export class DoctorProfileDto {
+// aside from email, password, and type which are used for authentication
+export class UserProfileDto {
   @IsString()
   @MinLength(2)
   @MaxLength(32)
@@ -13,6 +13,6 @@ export class DoctorProfileDto {
   @MaxLength(40)
   lastName: string;
 
-  @IsEnum(DoctorState)
-  state: DoctorState;
+  @IsEnum(UserState)
+  state: UserState;
 }
