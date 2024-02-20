@@ -48,18 +48,19 @@ export class PatientsInsuranceService {
     if (user.type !== UserType.PATIENT) {
       throw new UnauthorizedException('User is not a patient');
     }
+    const profile = user.profile;
 
-    // Get the insurance
+    // Get the insurance in same state as patient
     const { insuranceId } = createDoctorInsuranceDto;
     const insurance = await this.insurancesRepository.findOne({
-      where: { id: insuranceId },
+      where: { id: insuranceId, state: profile.state },
     });
     if (!insurance) {
       throw new NotFoundException('Insurance not found');
     }
 
     return await this.profilesRepository.addPatientInsurance(
-      user.profile,
+      profile,
       insurance,
     );
   }

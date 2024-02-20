@@ -41,19 +41,17 @@ export class DoctorsInsuranceService {
     if (user.type !== UserType.DOCTOR) {
       throw new UnauthorizedException('User is not a doctor');
     }
+    const profile = user.profile;
 
-    // Get the insurance
+    // Get the insurance in same state as doctor
     const { insuranceId } = createDoctorInsuranceDto;
     const insurance = await this.insurancesRepository.findOne({
-      where: { id: insuranceId },
+      where: { id: insuranceId, state: profile.state },
     });
     if (!insurance) {
       throw new NotFoundException('Insurance not found');
     }
 
-    return await this.profilesRepository.addDoctorInsurance(
-      user.profile,
-      insurance,
-    );
+    return await this.profilesRepository.addDoctorInsurance(profile, insurance);
   }
 }
