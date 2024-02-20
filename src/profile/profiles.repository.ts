@@ -18,7 +18,8 @@ export interface ProfilesRepository extends Repository<Profile> {
     profile: Profile,
   ): Promise<Profile>;
   getInsurances(profile: Profile): Promise<Insurance[]>;
-  addInsurance(profile: Profile, insurance: Insurance): Promise<void>;
+  addDoctorInsurance(profile: Profile, insurance: Insurance): Promise<void>;
+  addPatientInsurance(profile: Profile, insurance: Insurance): Promise<void>;
 }
 
 export const customProfilesRepository: Pick<ProfilesRepository, any> = {
@@ -53,7 +54,10 @@ export const customProfilesRepository: Pick<ProfilesRepository, any> = {
     return profileWithInsurance.insurances;
   },
 
-  async addInsurance(profile: Profile, insurance: Insurance): Promise<void> {
+  async addDoctorInsurance(
+    profile: Profile,
+    insurance: Insurance,
+  ): Promise<void> {
     const profileWithInsurance = await this.findOne({
       where: { id: profile.id },
       relations: { insurances: true },
@@ -65,6 +69,26 @@ export const customProfilesRepository: Pick<ProfilesRepository, any> = {
     );
     if (profileInsuranceAlreadyExists) {
       throw new ConflictException('Profile already has this insurance');
+    }
+
+    profileWithInsurance.insurances.push(insurance);
+    return await this.save(profileWithInsurance);
+  },
+
+  async addPatientInsurance(
+    profile: Profile,
+    insurance: Insurance,
+  ): Promise<void> {
+    const profileWithInsurance = await this.findOne({
+      where: { id: profile.id },
+      relations: { insurances: true },
+    });
+
+    // check if insurance already exists on profile
+    const profileInsuranceAlreadyExists =
+      profileWithInsurance.insurances.length > 0;
+    if (profileInsuranceAlreadyExists) {
+      throw new ConflictException('Patient already has insurance');
     }
 
     profileWithInsurance.insurances.push(insurance);

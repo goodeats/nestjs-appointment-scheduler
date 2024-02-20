@@ -13,7 +13,7 @@ import { Profile } from 'src/profile/profile.entity';
 import { ProfilesRepository } from 'src/profile/profiles.repository';
 
 @Injectable()
-export class DoctorsInsuranceService {
+export class PatientsInsuranceService {
   constructor(
     @InjectRepository(Insurance)
     private insurancesRepository: InsurancesRepository,
@@ -22,24 +22,31 @@ export class DoctorsInsuranceService {
     private profilesRepository: ProfilesRepository,
   ) {}
 
-  async getInsurancesByDoctorId(
+  async getInsurancesByPatientId(
     insurancesFilterDto: GetInsurancesFilterDto,
     user: User,
-  ): Promise<Insurance[]> {
+  ): Promise<Insurance> {
     // this could be its own decorator
-    if (user.type !== UserType.DOCTOR) {
-      throw new UnauthorizedException('User is not a doctor');
+    if (user.type !== UserType.PATIENT) {
+      throw new UnauthorizedException('User is not a patient');
     }
 
-    return await this.profilesRepository.getInsurances(user.profile);
+    const insurances = await this.profilesRepository.getInsurances(
+      user.profile,
+    );
+    if (insurances.length === 0) {
+      throw new NotFoundException('Insurance not found');
+    }
+
+    return insurances[0];
   }
 
-  async createInsuranceByDoctorId(
+  async createInsuranceByPatientId(
     createDoctorInsuranceDto,
     user: User,
   ): Promise<void> {
-    if (user.type !== UserType.DOCTOR) {
-      throw new UnauthorizedException('User is not a doctor');
+    if (user.type !== UserType.PATIENT) {
+      throw new UnauthorizedException('User is not a patient');
     }
 
     // Get the insurance
@@ -51,7 +58,7 @@ export class DoctorsInsuranceService {
       throw new NotFoundException('Insurance not found');
     }
 
-    return await this.profilesRepository.addDoctorInsurance(
+    return await this.profilesRepository.addPatientInsurance(
       user.profile,
       insurance,
     );
