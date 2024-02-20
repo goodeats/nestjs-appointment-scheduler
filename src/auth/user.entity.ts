@@ -1,23 +1,17 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { DoctorState } from './doctor-state.enum';
+import { UserType } from './user-type.enum';
 
 @Entity()
-export class Doctor {
+export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
   password: string;
 
   @Column()
-  state: DoctorState;
+  type: UserType;
 }

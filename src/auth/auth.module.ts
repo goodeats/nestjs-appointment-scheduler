@@ -6,12 +6,12 @@ import {
   getDataSourceToken,
   getRepositoryToken,
 } from '@nestjs/typeorm';
-import { Doctor } from './doctor.entity';
+import { User } from './user.entity';
 import { DataSource } from 'typeorm';
-import { customDoctorsRepository } from './doctors.repository';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { customUsersRepository } from './users.repository';
 
 @Module({
   imports: [
@@ -22,17 +22,17 @@ import { JwtStrategy } from './jwt.strategy';
         expiresIn: 3600,
       },
     }),
-    TypeOrmModule.forFeature([Doctor]),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
     JwtStrategy,
     {
-      provide: getRepositoryToken(Doctor),
+      provide: getRepositoryToken(User),
       inject: [getDataSourceToken()],
       useFactory: (dataSource: DataSource) =>
-        dataSource.getRepository(Doctor).extend(customDoctorsRepository),
+        dataSource.getRepository(User).extend(customUsersRepository),
     },
   ],
   exports: [JwtStrategy, PassportModule],
