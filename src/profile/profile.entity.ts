@@ -9,6 +9,7 @@ import {
 import { UserState } from './user-state.enum';
 import { User } from 'src/auth/user.entity';
 import { Insurance } from 'src/insurance/insurance.entity';
+import { Appointment } from 'src/appointment/appointment.entity';
 
 @Entity()
 export class Profile {
@@ -31,4 +32,8 @@ export class Profile {
   @ManyToMany(() => Insurance, (insurance) => insurance.profiles)
   @JoinTable()
   insurances: Insurance[];
+
+  @ManyToMany(() => Appointment, (appointment) => appointment.profiles)
+  @JoinTable()
+  appointments: Appointment[];
 }
