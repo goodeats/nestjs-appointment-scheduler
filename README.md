@@ -5,6 +5,11 @@ Practicing NestJS with building an appointment scheduler for doctors and patient
 - `User` auth has signup endpoints for types: `Doctor` and `Patient`
 - `User` auth has shared signin endpoint
 - `Profile` has authenticated endpoints for Get, Post, Patch
+- `Insurance` auth query filters by user `Profile` `State` with search by name substring
+
+TODO:
+
+- `User` type `Admin` for creating `Insurance`
 
 ## Description
 
