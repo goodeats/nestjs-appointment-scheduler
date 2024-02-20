@@ -4,7 +4,8 @@ import { User } from 'src/auth/user.entity';
 import { UserProfileDto } from './dto/user-profile.dto';
 import { Insurance } from 'src/insurance/insurance.entity';
 import { Appointment } from 'src/appointment/appointment.entity';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { UserType } from 'src/auth/user-type.enum';
 
 // Creating and Using Custom Repositories in NestJS with TypeORM 0.3
 // https://tech.durgadas.in/creating-and-using-custom-repositories-in-nestjs-with-typeorm-0-3-c7ac9548ad99
@@ -13,6 +14,8 @@ import { ConflictException } from '@nestjs/common';
 export interface ProfilesRepository extends Repository<Profile> {
   this: Repository<Profile>;
   getProfile(user: User): Promise<Profile>;
+  getProfileById(id: string): Promise<Profile>;
+  getDoctorProfileById(id: string): Promise<Profile>;
   createProfile(userProfileDto: UserProfileDto, user: User): Promise<Profile>;
   updateProfile(
     userProfileDto: UserProfileDto,
@@ -26,7 +29,27 @@ export interface ProfilesRepository extends Repository<Profile> {
 
 export const customProfilesRepository: Pick<ProfilesRepository, any> = {
   async getProfile(user: User): Promise<Profile> {
-    return this.findOne({ where: { user } });
+    return await this.findOne({ where: { user } });
+  },
+
+  async getProfileById(id: string): Promise<Profile> {
+    return await this.findOne({ where: { id } });
+  },
+
+  async getDoctorProfileById(id: string): Promise<Profile> {
+    const profile = await this.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+
+    if (profile.user.type !== UserType.DOCTOR) {
+      throw new NotFoundException('Doctor profile not found');
+    }
+
+    // I'm sure there is a better way to return the prfile object
+    // without getting a typescript error on the promise
+    // not that important right now
+    return await this.findOne({ where: { id } });
   },
 
   async createProfile(

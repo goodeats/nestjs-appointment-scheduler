@@ -14,4 +14,7 @@ export class Appointment {
 
   @ManyToMany(() => Profile, (profile) => profile.appointments)
   profiles: Profile[];
+
+  // join with insurance would be good to add as well
+  // will verify patient and doctor share the same insurance on the repositroy level
 }

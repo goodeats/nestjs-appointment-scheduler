@@ -1,6 +1,8 @@
 import { Repository } from 'typeorm';
 import { Appointment } from './appointment.entity';
 import { User } from 'src/auth/user.entity';
+import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { Profile } from 'src/profile/profile.entity';
 
 // Creating and Using Custom Repositories in NestJS with TypeORM 0.3
 // https://tech.durgadas.in/creating-and-using-custom-repositories-in-nestjs-with-typeorm-0-3-c7ac9548ad99
@@ -8,11 +10,23 @@ import { User } from 'src/auth/user.entity';
 
 export interface AppointmentsRepository extends Repository<Appointment> {
   this: Repository<Appointment>;
-  getAppointments(user: User): Promise<Appointment[]>;
+  createAppointment(
+    patientProfile: Profile,
+    doctorProfile: Profile,
+  ): Promise<void>;
 }
 
 export const customAppointmentsRepository: Pick<AppointmentsRepository, any> = {
-  async getAppointments(user: User): Promise<Appointment[]> {
-    return this.find({ where: { user } });
+  async createAppointment(
+    patientProfile: Profile,
+    doctorProfile: Profile,
+  ): Promise<void> {
+    const profiles = [patientProfile, doctorProfile];
+    const appointment = this.create({
+      doctorId: doctorProfile.id,
+      patientId: patientProfile.id,
+      profiles,
+    });
+    return await this.save(appointment);
   },
 };
