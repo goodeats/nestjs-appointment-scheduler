@@ -9,9 +9,12 @@ import {
 } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { customAppointmentsRepository } from './appointments.repository';
+import { Profile } from 'src/profile/profile.entity';
+import { customProfilesRepository } from 'src/profile/profiles.repository';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Appointment])],
+  imports: [TypeOrmModule.forFeature([Appointment]), AuthModule],
   controllers: [AppointmentController],
   providers: [
     AppointmentService,
@@ -22,6 +25,12 @@ import { customAppointmentsRepository } from './appointments.repository';
         dataSource
           .getRepository(Appointment)
           .extend(customAppointmentsRepository),
+    },
+    {
+      provide: getRepositoryToken(Profile),
+      inject: [getDataSourceToken()],
+      useFactory: (dataSource: DataSource) =>
+        dataSource.getRepository(Profile).extend(customProfilesRepository),
     },
   ],
 })

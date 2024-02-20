@@ -3,6 +3,7 @@ import { Profile } from './profile.entity';
 import { User } from 'src/auth/user.entity';
 import { UserProfileDto } from './dto/user-profile.dto';
 import { Insurance } from 'src/insurance/insurance.entity';
+import { Appointment } from 'src/appointment/appointment.entity';
 import { ConflictException } from '@nestjs/common';
 
 // Creating and Using Custom Repositories in NestJS with TypeORM 0.3
@@ -20,6 +21,7 @@ export interface ProfilesRepository extends Repository<Profile> {
   getInsurances(profile: Profile): Promise<Insurance[]>;
   addDoctorInsurance(profile: Profile, insurance: Insurance): Promise<void>;
   addPatientInsurance(profile: Profile, insurance: Insurance): Promise<void>;
+  getAppointments(profile: Profile): Promise<Appointment[]>;
 }
 
 export const customProfilesRepository: Pick<ProfilesRepository, any> = {
@@ -93,5 +95,13 @@ export const customProfilesRepository: Pick<ProfilesRepository, any> = {
 
     profileWithInsurance.insurances.push(insurance);
     return await this.save(profileWithInsurance);
+  },
+
+  async getAppointments(profile: Profile): Promise<Appointment[]> {
+    const profileWithAppointments = await this.findOne({
+      where: { id: profile.id },
+      relations: { appointments: true },
+    });
+    return profileWithAppointments.appointments;
   },
 };
