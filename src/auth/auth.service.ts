@@ -1,32 +1,36 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Doctor } from './doctor.entity';
-import { DoctorsRepository } from './doctors.repository';
+import { User } from './user.entity';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { JwtPayload } from './dto/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
-import { DoctorSignupDto } from './dto/doctor-signup.dto';
+import { UsersRepository } from './users.repository';
+import { UserType } from './user-type.enum';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(Doctor) private doctorsRepository: DoctorsRepository,
+    @InjectRepository(User) private usersRepository: UsersRepository,
     private jwtService: JwtService,
   ) {}
 
-  async signUp(doctorSignupDto: DoctorSignupDto): Promise<void> {
-    return await this.doctorsRepository.createDoctor(doctorSignupDto);
+  async signUpDoctor(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    const type = UserType.DOCTOR;
+    return await this.usersRepository.createUser(authCredentialsDto, type);
+  }
+
+  async signUpPatient(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    const type = UserType.PATIENT;
+    return await this.usersRepository.createUser(authCredentialsDto, type);
   }
 
   async signIn(
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
     const { email, password } = authCredentialsDto;
-    const doctor = await this.doctorsRepository.getByEmail(email);
-    console.log('doctor', doctor);
-    if (doctor && (await bcrypt.compare(password, doctor.password))) {
-      console.log('here');
+    const user = await this.usersRepository.getByEmail(email);
+    if (user && (await bcrypt.compare(password, user.password))) {
       const payload: JwtPayload = { email };
       const accessToken = this.jwtService.sign(payload);
       return { accessToken };
