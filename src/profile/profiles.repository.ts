@@ -13,6 +13,10 @@ export interface ProfilesRepository extends Repository<Profile> {
   this: Repository<Profile>;
   getProfile(user: User): Promise<Profile>;
   createProfile(userProfileDto: UserProfileDto, user: User): Promise<Profile>;
+  updateProfile(
+    userProfileDto: UserProfileDto,
+    profile: Profile,
+  ): Promise<Profile>;
 }
 
 export const customProfilesRepository: Pick<ProfilesRepository, any> = {
@@ -30,5 +34,12 @@ export const customProfilesRepository: Pick<ProfilesRepository, any> = {
     });
 
     return await this.save(profile);
+  },
+
+  async updateProfile(
+    userProfileDto: UserProfileDto,
+    profile: Profile,
+  ): Promise<Profile> {
+    return await this.save({ ...profile, ...userProfileDto });
   },
 };

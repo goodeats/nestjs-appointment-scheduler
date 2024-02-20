@@ -34,4 +34,14 @@ export class ProfileService {
 
     return await this.profileRepository.createProfile(userProfileDto, user);
   }
+
+  async updateProfile(userProfileDto: UserProfileDto, user: User) {
+    const profile = await this.profileRepository.getProfile(user);
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    return await this.profileRepository.updateProfile(userProfileDto, profile);
+  }
 }

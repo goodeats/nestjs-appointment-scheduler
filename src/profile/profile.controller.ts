@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/auth/user.entity';
@@ -17,7 +17,11 @@ export class ProfileController {
 
   @Post()
   createProfile(@Body() userProfileDto: UserProfileDto, @GetUser() user: User) {
-    console.log('userProfileDto', userProfileDto);
     return this.profileService.createProfile(userProfileDto, user);
+  }
+
+  @Patch()
+  updateProfile(@Body() userProfileDto: UserProfileDto, @GetUser() user: User) {
+    return this.profileService.updateProfile(userProfileDto, user);
   }
 }
