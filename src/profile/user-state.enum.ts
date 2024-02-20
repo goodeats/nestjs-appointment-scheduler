@@ -1,4 +1,4 @@
-export enum DoctorState {
+export enum UserState {
   AL = 'AL',
   AK = 'AK',
   AZ = 'AZ',

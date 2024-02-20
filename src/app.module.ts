@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { ProfileService } from './profile/profile.service';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -15,8 +17,9 @@ import { AuthModule } from './auth/auth.module';
       synchronize: true,
     }),
     AuthModule,
+    ProfileModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [ProfileService],
 })
 export class AppModule {}
