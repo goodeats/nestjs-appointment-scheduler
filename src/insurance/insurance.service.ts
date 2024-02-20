@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { InsurancesRepository } from './insurances.repository';
 import { Insurance } from './insurance.entity';
@@ -22,15 +22,9 @@ export class InsuranceService {
     insurancesFilterDto: GetInsurancesFilterDto,
     user: User,
   ): Promise<Insurance[]> {
-    const profile = await this.profilesRepository.getProfile(user);
-
-    if (!profile) {
-      throw new NotFoundException('Profile not found');
-    }
-
     return this.insurancesRepository.getInsurances(
       insurancesFilterDto,
-      profile,
+      user.profile,
     );
   }
 

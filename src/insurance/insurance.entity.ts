@@ -1,5 +1,6 @@
+import { Profile } from 'src/profile/profile.entity';
 import { UserState } from 'src/profile/user-state.enum';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Insurance {
@@ -15,4 +16,7 @@ export class Insurance {
   // for the purposes of a doctor and patient having insurance, that belongs to one state
   @Column()
   state: UserState;
+
+  @ManyToMany(() => Profile, (profile) => profile.insurances)
+  profiles: Profile[];
 }

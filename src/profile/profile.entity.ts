@@ -1,6 +1,14 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserState } from './user-state.enum';
 import { User } from 'src/auth/user.entity';
+import { Insurance } from 'src/insurance/insurance.entity';
 
 @Entity()
 export class Profile {
@@ -18,4 +26,9 @@ export class Profile {
 
   @OneToOne(() => User, (user) => user.profile)
   user: User;
+
+  // will limit to one in business logic for patients
+  @ManyToMany(() => Insurance, (insurance) => insurance.profiles)
+  @JoinTable()
+  insurances: Insurance[];
 }
