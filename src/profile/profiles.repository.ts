@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { ConflictException } from '@nestjs/common';
 import { Profile } from './profile.entity';
 import { User } from 'src/auth/user.entity';
+import { UserProfileDto } from './dto/user-profile.dto';
 
 // Creating and Using Custom Repositories in NestJS with TypeORM 0.3
 // https://tech.durgadas.in/creating-and-using-custom-repositories-in-nestjs-with-typeorm-0-3-c7ac9548ad99
@@ -11,10 +12,23 @@ import { User } from 'src/auth/user.entity';
 export interface ProfilesRepository extends Repository<Profile> {
   this: Repository<Profile>;
   getProfile(user: User): Promise<Profile>;
+  createProfile(userProfileDto: UserProfileDto, user: User): Promise<Profile>;
 }
 
 export const customProfilesRepository: Pick<ProfilesRepository, any> = {
   async getProfile(user: User): Promise<Profile> {
     return this.findOne({ where: { user } });
+  },
+
+  async createProfile(
+    userProfileDto: UserProfileDto,
+    user: User,
+  ): Promise<Profile> {
+    const profile = this.create({
+      ...userProfileDto,
+      user,
+    });
+
+    return await this.save(profile);
   },
 };
