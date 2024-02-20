@@ -1,4 +1,16 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ProfileService } from './profile.service';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/auth/user.entity';
+import { GetUser } from 'src/auth/get-user.decorator';
 
 @Controller('profile')
-export class ProfileController {}
+@UseGuards(AuthGuard())
+export class ProfileController {
+  constructor(private profileService: ProfileService) {}
+
+  @Get()
+  getProfile(@GetUser() user: User) {
+    return this.profileService.getProfile(user);
+  }
+}

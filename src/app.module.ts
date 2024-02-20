@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { ProfileService } from './profile/profile.service';
 import { ProfileModule } from './profile/profile.module';
 
 @Module({
@@ -20,6 +19,6 @@ import { ProfileModule } from './profile/profile.module';
     ProfileModule,
   ],
   controllers: [],
-  providers: [ProfileService],
+  providers: [],
 })
 export class AppModule {}
