@@ -12,11 +12,11 @@ import { UserProfileDto } from './dto/user-profile.dto';
 @Injectable()
 export class ProfileService {
   constructor(
-    @InjectRepository(Profile) private profileRepository: ProfilesRepository,
+    @InjectRepository(Profile) private profilesRepository: ProfilesRepository,
   ) {}
 
   async getProfile(user: User) {
-    const found = await this.profileRepository.getProfile(user);
+    const found = await this.profilesRepository.getProfile(user);
 
     if (!found) {
       throw new NotFoundException('Profile not found');
@@ -26,22 +26,22 @@ export class ProfileService {
   }
 
   async createProfile(userProfileDto: UserProfileDto, user: User) {
-    const found = await this.profileRepository.getProfile(user);
+    const found = await this.profilesRepository.getProfile(user);
 
     if (found) {
       throw new ConflictException('Profile already exists');
     }
 
-    return await this.profileRepository.createProfile(userProfileDto, user);
+    return await this.profilesRepository.createProfile(userProfileDto, user);
   }
 
   async updateProfile(userProfileDto: UserProfileDto, user: User) {
-    const profile = await this.profileRepository.getProfile(user);
+    const profile = await this.profilesRepository.getProfile(user);
 
     if (!profile) {
       throw new NotFoundException('Profile not found');
     }
 
-    return await this.profileRepository.updateProfile(userProfileDto, profile);
+    return await this.profilesRepository.updateProfile(userProfileDto, profile);
   }
 }
