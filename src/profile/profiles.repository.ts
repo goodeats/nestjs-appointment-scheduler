@@ -1,6 +1,4 @@
-import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { ConflictException } from '@nestjs/common';
 import { Profile } from './profile.entity';
 import { User } from 'src/auth/user.entity';
 import { UserProfileDto } from './dto/user-profile.dto';
