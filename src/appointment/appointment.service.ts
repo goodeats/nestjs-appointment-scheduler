@@ -36,6 +36,8 @@ export class AppointmentService {
     createAppointmentDto: CreateAppointmentDto,
     user: User,
   ): Promise<void> {
+    // was thinking doctors aren't browsing for patients to book,
+    // but they could create a follow-up appointment
     if (user.type !== UserType.PATIENT) {
       throw new UnauthorizedException(
         'A patient must be the one to create an appointment',
